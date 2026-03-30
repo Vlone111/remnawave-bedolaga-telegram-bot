@@ -1263,7 +1263,7 @@ def get_subscription_keyboard(
                 
                 # 1 ряд: [Продлить подписку] (одна большая)
                 keyboard.append(
-                    [InlineKeyboardButton(text=texts.MENU_EXTEND_SUBSCRIPTION, callback_data='subscription_extend')]
+                    [InlineKeyboardButton(text=texts.MENU_EXTEND_SUBSCRIPTION, callback_data='subscription_extend', style='primary')]
                 )
 
                 # 2 ряд: [Докупить трафик] [Устройства] (две маленькие)
@@ -1280,7 +1280,7 @@ def get_subscription_keyboard(
                 if show_traffic_topup:
                     row2.append(
                         InlineKeyboardButton(
-                            text=texts.t('BUY_TRAFFIC_BUTTON', '📈 Докупить трафик'), callback_data='buy_traffic'
+                            text=texts.t('BUY_TRAFFIC_BUTTON', '📈 Трафик'), callback_data='buy_traffic'
                         )
                     )
                 
@@ -2997,7 +2997,7 @@ def get_updated_subscription_settings_keyboard(
             keyboard.append(
                 [
                     InlineKeyboardButton(
-                        text=texts.t('CHANGE_DEVICES_BUTTON', '📱 Изменить устройства'),
+                        text=texts.t('CHANGE_DEVICES_BUTTON', '📱 Докупить устройства'),
                         callback_data='subscription_change_devices',
                     )
                 ]
@@ -3006,7 +3006,7 @@ def get_updated_subscription_settings_keyboard(
         keyboard.append(
             [
                 InlineKeyboardButton(
-                    text=texts.t('CHANGE_DEVICES_BUTTON', '📱 Изменить устройства'),
+                    text=texts.t('CHANGE_DEVICES_BUTTON', '📱 Докупить устройства'),
                     callback_data='subscription_change_devices',
                 )
             ]
