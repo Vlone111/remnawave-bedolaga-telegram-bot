@@ -558,7 +558,7 @@ async def show_tariffs_list(
 
     # Получаем доступные тарифы
     promo_group_id = getattr(db_user, 'promo_group_id', None)
-    tariffs = await get_tariffs_for_user(db, promo_group_id)
+    tariffs = await get_tariffs_for_user(db, promo_group_id, user_id=db_user.id)
 
     if not tariffs:
         await callback.message.edit_text(
@@ -2528,7 +2528,7 @@ async def show_tariff_switch_list(
 
     # Получаем доступные тарифы
     promo_group_id = getattr(db_user, 'promo_group_id', None)
-    tariffs = await get_tariffs_for_user(db, promo_group_id)
+    tariffs = await get_tariffs_for_user(db, promo_group_id, user_id=db_user.id)
 
     # Filter out ALL tariffs user already has active subscriptions for
     if settings.is_multi_tariff_enabled():
@@ -3413,7 +3413,7 @@ async def show_instant_switch_list(
 
     # Получаем доступные тарифы
     promo_group_id = getattr(db_user, 'promo_group_id', None)
-    tariffs = await get_tariffs_for_user(db, promo_group_id)
+    tariffs = await get_tariffs_for_user(db, promo_group_id, user_id=db_user.id)
 
     # Filter out ALL tariffs user already has active subscriptions for
     if settings.is_multi_tariff_enabled():
