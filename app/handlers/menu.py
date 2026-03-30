@@ -1082,34 +1082,140 @@ async def show_faq_answer(
 
     texts = get_texts(db_user.language)
 
-    # Извлекаем ID вопроса из callback_data
-    question_id = (callback.data or '').split(':', 1)[-1]
+    # Извлекаем ID вопроса и номер страницы из callback_data
+    raw_data = callback.data or ''
+    parts = raw_data.split(':')
+    
+    page_id = None
+    requested_page = 1
+    
+    if len(parts) >= 2:
+        try:
+            page_id = int(parts[1])
+        except ValueError:
+            page_id = None
+    
+    if len(parts) >= 3:
+        try:
+            requested_page = int(parts[2])
+        except ValueError:
+            requested_page = 1
+
+    if not page_id:
+        await callback.answer()
+        return
 
     # Получаем страницу FAQ из БД
     try:
-        page_id = int(question_id)
         faq_page = await FaqService.get_page(db, page_id, db_user.language)
         
-        if faq_page:
-            caption = f"<b>{faq_page.title}</b>\n\n{faq_page.content}"
-        else:
-            caption = texts.t('FAQ_PAGE_NOT_AVAILABLE', 'Эта страница FAQ недоступна.')
-    except (ValueError, Exception):
-        caption = texts.t('FAQ_PAGE_NOT_AVAILABLE', 'Эта страница FAQ недоступна.')
+        if not faq_page or not faq_page.is_active:
+            await callback.answer(
+                texts.t('FAQ_PAGE_NOT_AVAILABLE', 'Эта страница FAQ недоступна.'),
+                show_alert=True,
+            )
+            return
+    except Exception as e:
+        logger.error(f'Error loading FAQ page: {e}', exc_info=True)
+        await callback.answer(
+            texts.t('FAQ_PAGE_NOT_AVAILABLE', 'Эта страница FAQ недоступна.'),
+            show_alert=True,
+        )
+        return
 
-    # Клавиатура с кнопкой "Назад к вопросам"
-    keyboard = types.InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text=texts.t('BACK_TO_FAQ', '⬅️ Назад к FAQ'), callback_data='menu_faq')],
+    # Разделяем контент на страницы если он слишком большой
+    content_pages = FaqService.split_content_into_pages(faq_page.content)
+    
+    if not content_pages:
+        await callback.answer(
+            texts.t('FAQ_PAGE_EMPTY', 'Текст для этой страницы ещё не добавлен.'),
+            show_alert=True,
+        )
+        return
+
+    total_pages = len(content_pages)
+    current_page = max(1, min(requested_page, total_pages))
+
+    # Формируем сообщение
+    header = texts.t('FAQ_HEADER', '❓ <b>FAQ</b>')
+    title_template = texts.t('FAQ_PAGE_TITLE', '<b>{title}</b>')
+    page_title = (faq_page.title or '').strip()
+    if not page_title:
+        page_title = texts.t('FAQ_PAGE_UNTITLED', 'Без названия')
+    title_block = title_template.format(title=html.escape(page_title))
+
+    body = content_pages[current_page - 1]
+
+    footer_template = texts.t(
+        'FAQ_PAGE_FOOTER',
+        'Страница {current} из {total}',
+    )
+    footer = ''
+    if total_pages > 1 and footer_template:
+        try:
+            footer = footer_template.format(current=current_page, total=total_pages)
+        except Exception:
+            footer = f'{current_page}/{total_pages}'
+
+    parts_to_join = [header, title_block]
+    if body:
+        parts_to_join.append(body)
+    if footer:
+        parts_to_join.append(f'<code>{footer}</code>')
+
+    message_text = '\n\n'.join(segment for segment in parts_to_join if segment)
+
+    # Формируем клавиатуру
+    keyboard_rows: list[list[types.InlineKeyboardButton]] = []
+
+    if total_pages > 1:
+        nav_row: list[types.InlineKeyboardButton] = []
+        if current_page > 1:
+            nav_row.append(
+                types.InlineKeyboardButton(
+                    text=texts.t('PAGINATION_PREV', '⬅️'),
+                    callback_data=f'faq_answer:{page_id}:{current_page - 1}',
+                )
+            )
+
+        nav_row.append(
+            types.InlineKeyboardButton(
+                text=f'{current_page}/{total_pages}',
+                callback_data='noop',
+            )
+        )
+
+        if current_page < total_pages:
+            nav_row.append(
+                types.InlineKeyboardButton(
+                    text=texts.t('PAGINATION_NEXT', '➡️'),
+                    callback_data=f'faq_answer:{page_id}:{current_page + 1}',
+                )
+            )
+
+        keyboard_rows.append(nav_row)
+
+    keyboard_rows.append(
+        [
+            types.InlineKeyboardButton(
+                text=texts.t('FAQ_BACK_TO_LIST', '⬅️ К списку FAQ'),
+                callback_data='menu_faq',
+            )
         ]
     )
 
-    await edit_or_answer_photo(
-        callback=callback,
-        caption=caption,
-        keyboard=keyboard,
-        parse_mode='HTML',
-    )
+    try:
+        await callback.message.edit_text(
+            message_text,
+            reply_markup=types.InlineKeyboardMarkup(inline_keyboard=keyboard_rows),
+            parse_mode='HTML',
+            disable_web_page_preview=settings.DISABLE_WEB_PAGE_PREVIEW,
+        )
+    except Exception as e:
+        logger.error(f'Error sending FAQ answer: {e}', exc_info=True)
+        await callback.answer('Ошибка при загрузке ответа', show_alert=True)
+        return
+        
     await callback.answer()
 
 
