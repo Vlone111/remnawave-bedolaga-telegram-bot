@@ -433,47 +433,19 @@ async def show_subscription_info(callback: types.CallbackQuery, db_user: User, d
         except Exception as e:
             logger.warning('Ошибка получения тарифа', error=e, exc_info=True)
 
+    # Название тарифа для отображения
+    tariff_name_display = ''
+    if tariff:
+        tariff_name_display = f'📦 {tariff.name}'
+    else:
+        tariff_name_display = ''
+
     # Определяем, суточный ли тариф для выбора шаблона
     is_daily_tariff = tariff and getattr(tariff, 'is_daily', False)
 
-    if is_daily_tariff:
-        # Для суточных тарифов другой шаблон без "Действует до" и "Осталось"
-        message_template = texts.t(
-            'SUBSCRIPTION_DAILY_OVERVIEW_TEMPLATE',
-            """👤 {full_name}
-💰 Баланс: {balance}
-📱 Подписка: {status_emoji} {status_display}{warning}{tariff_info_block}
-
-📱 Информация о подписке
-🎭 Тип: {subscription_type}
-📈 Трафик: {traffic}
-🌍 Серверы: {servers}
-📱 Устройства: {devices_used} / {device_limit}""",
-        )
-    else:
-        message_template = texts.t(
-            'SUBSCRIPTION_OVERVIEW_TEMPLATE',
-            """👤 {full_name}
-💰 Баланс: {balance}
-📱 Подписка: {status_emoji} {status_display}{warning}{tariff_info_block}
-
-📱 Информация о подписке
-🎭 Тип: {subscription_type}
-📅 Действует до: {end_date}
-⏰ Осталось: {time_left}
-📈 Трафик: {traffic}
-🌍 Серверы: {servers}
-📱 Устройства: {devices_used} / {device_limit}""",
-        )
-
-    if not show_devices:
-        message_template = message_template.replace(
-            '\n📱 Устройства: {devices_used} / {device_limit}',
-            '',
-        )
-
     device_limit_display = str(subscription.device_limit)
 
+<<<<<<< HEAD
     message = message_template.format(
         full_name=html.escape(db_user.full_name or ''),
         balance=settings.format_price(db_user.balance_kopeks),
@@ -489,12 +461,40 @@ async def show_subscription_info(callback: types.CallbackQuery, db_user: User, d
         devices_used=devices_used_str,
         device_limit=device_limit_display,
     )
+=======
+    # Первая часть сообщения (без blockquote)
+    header_part = f"""👤 {db_user.full_name}
+💰 Баланс: {settings.format_price(db_user.balance_kopeks)}
+📱 Подписка: {status_emoji} {status_display}{warning_text}
+>>>>>>> 6e9bca5d (исправил продлить/изменить подписку кнопки)
 
+{tariff_name_display}"""
+
+    # Вторая часть (информация о подписке) - начинается blockquote
+    if is_daily_tariff:
+        # Для суточных тарифов другой шаблон без "Действует до" и "Осталось"
+        info_part = f"""📱 Информация о подписке
+🎭 Тип: {subscription_type}
+📈 Трафик: {traffic_used_display}
+📱 Устройства: {devices_used_str} / {device_limit_display}"""
+    else:
+        info_part = f"""📱 Информация о подписке
+🎭 Тип: {subscription_type}
+📅 Действует до: {format_local_datetime(subscription.end_date, '%d.%m.%Y %H:%M')}
+⏰ Осталось: {time_left_text}
+📈 Трафик: {traffic_used_display}
+📱 Устройства: {devices_used_str} / {device_limit_display}"""
+
+    if not show_devices:
+        info_part = info_part.replace('\n📱 Устройства: {devices_used_str} / {device_limit_display}', '')
+        info_part = info_part.replace(f'\n📱 Устройства: {devices_used_str} / {device_limit_display}', '')
+
+    # Начинаем blockquote с информации о подписке
+    blockquote_content = f'<blockquote>{info_part}'
+
+    # Добавляем список подключенных устройств в blockquote
     if show_devices and devices_list:
-        message += '\n\n' + texts.t(
-            'SUBSCRIPTION_CONNECTED_DEVICES_TITLE',
-            '<blockquote>📱 <b>Подключенные устройства:</b>\n',
-        )
+        blockquote_content += '\n\n📱 <b>Подключенные устройства:</b>\n'
         for device in devices_list[:5]:
             platform = device.get('platform', 'Unknown')
             device_model = device.get('deviceModel', 'Unknown')
@@ -502,10 +502,15 @@ async def show_subscription_info(callback: types.CallbackQuery, db_user: User, d
 
             if len(device_info) > 35:
                 device_info = device_info[:32] + '...'
-            message += f'• {device_info}\n'
-        message += texts.t('SUBSCRIPTION_CONNECTED_DEVICES_FOOTER', '</blockquote>')
+            blockquote_content += f'• {device_info}\n'
 
-    # Отображаем докупленный трафик
+    # Закрываем blockquote после списка устройств
+    blockquote_content += '</blockquote>'
+
+    # Объединяем части сообщения
+    message = header_part + '\n\n' + blockquote_content
+
+    # Отображаем докупленный трафик (вне blockquote)
     if subscription.traffic_limit_gb > 0:  # Только для лимитированных тарифов
         from sqlalchemy import select as sql_select
 
@@ -1866,15 +1871,18 @@ async def handle_extend_subscription(
     renewal_lines = [
         '⏰ Продление подписки',
         '',
-        f'Осталось дней: {subscription.days_left}',
-        '',
-        '<b>Ваша текущая конфигурация:</b>',
-        f'🌍 Серверов: {len(subscription.connected_squads or [])}',
-        f'📊 Трафик: {texts.format_traffic(subscription.traffic_limit_gb)}',
     ]
 
-    if settings.is_devices_selection_enabled():
-        renewal_lines.append(f'📱 Устройств: {subscription.device_limit}')
+    # Добавляем название подписки/тарифа
+    if settings.is_tariffs_mode() and subscription.tariff_id:
+        try:
+            from app.database.crud.tariff import get_tariff_by_id
+
+            tariff = await get_tariff_by_id(db, subscription.tariff_id)
+            if tariff:
+                renewal_lines.append(f'<b>📦 {tariff.name}</b>')
+        except Exception:
+            pass
 
     renewal_lines.extend(
         [
@@ -1898,8 +1906,6 @@ async def handle_extend_subscription(
     )
     if promo_offer_hint:
         message_text += f'{promo_offer_hint}\n\n'
-
-    message_text += '💡 <i>Цена включает все ваши текущие серверы и настройки</i>'
 
     await callback.message.edit_text(
         message_text,

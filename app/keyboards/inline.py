@@ -1149,6 +1149,7 @@ def get_subscription_keyboard(
     )
 
     if has_subscription:
+<<<<<<< HEAD
         subscription_link = get_display_subscription_link(subscription) if subscription else None
         if subscription_link:
             connect_mode = settings.CONNECT_BUTTON_MODE
@@ -1222,6 +1223,8 @@ def get_subscription_keyboard(
                 ]
             )
 
+=======
+>>>>>>> 6e9bca5d (исправил продлить/изменить подписку кнопки)
         happ_row = get_happ_download_button_row(texts)
         if happ_row:
             keyboard.append(happ_row)
@@ -1256,51 +1259,67 @@ def get_subscription_keyboard(
                     [InlineKeyboardButton(text=pause_text, callback_data='toggle_daily_subscription_pause')]
                 )
             else:
-                # Для обычного тарифа: [Продлить] [Автоплатеж]
+                # Для обычного тарифа: новая структура кнопок
+                
+                # 1 ряд: [Продлить подписку] (одна большая)
                 keyboard.append(
-                    [
-                        InlineKeyboardButton(text=texts.MENU_EXTEND_SUBSCRIPTION, callback_data='subscription_extend'),
-                        InlineKeyboardButton(
-                            text=texts.t('AUTOPAY_BUTTON', '💳 Автоплатеж'),
-                            callback_data='subscription_autopay',
-                        ),
-                    ]
+                    [InlineKeyboardButton(text=texts.MENU_EXTEND_SUBSCRIPTION, callback_data='subscription_extend')]
                 )
 
-            # Ряд: [Настройки] [Тариф] (если режим тарифов)
-            settings_row = [
-                InlineKeyboardButton(
-                    text=texts.t('SUBSCRIPTION_SETTINGS_BUTTON', '⚙️ Настройки'),
-                    callback_data='subscription_settings',
-                )
-            ]
-            if settings.is_tariffs_mode() and subscription:
-                # Для суточных тарифов переходим на список тарифов, для обычных - мгновенное переключение
-                tariff_callback = 'tariff_switch' if is_daily_tariff else 'instant_switch'
-                settings_row.append(
-                    InlineKeyboardButton(
-                        text=texts.t('CHANGE_TARIFF_BUTTON', '📦 Тариф'), callback_data=tariff_callback
-                    )
-                )
-            keyboard.append(settings_row)
+                # 2 ряд: [Докупить трафик] [Устройства] (две маленькие)
+                row2 = []
+                
+                # Кнопка докупки трафика
+                show_traffic_topup = False
+                if subscription and (subscription.traffic_limit_gb or 0) > 0:
+                    if settings.is_tariffs_mode() and tariff:
+                        show_traffic_topup = tariff.can_topup_traffic()
+                    elif settings.is_traffic_topup_enabled() and not settings.is_traffic_topup_blocked():
+                        show_traffic_topup = True
 
-            # Кнопка докупки трафика для платных подписок
-            # В режиме тарифов проверяем can_topup_traffic() у тарифа, в классическом - глобальные настройки
-            show_traffic_topup = False
-            if subscription and (subscription.traffic_limit_gb or 0) > 0:
-                if settings.is_tariffs_mode() and tariff:
-                    show_traffic_topup = tariff.can_topup_traffic()
-                elif settings.is_traffic_topup_enabled() and not settings.is_traffic_topup_blocked():
-                    show_traffic_topup = True
-
-            if show_traffic_topup:
-                keyboard.append(
-                    [
+                if show_traffic_topup:
+                    row2.append(
                         InlineKeyboardButton(
                             text=texts.t('BUY_TRAFFIC_BUTTON', '📈 Докупить трафик'), callback_data='buy_traffic'
                         )
-                    ]
+                    )
+                
+                # Кнопка управления устройствами
+                row2.append(
+                    InlineKeyboardButton(
+                        text=texts.t('SUBSCRIPTION_SETTINGS_BUTTON', '🔧 Управление Устройствами'),
+                        callback_data='subscription_settings',
+                    )
                 )
+                
+                if row2:
+                    keyboard.append(row2)
+
+                # 3 ряд: [Автоплатеж] [Подключиться] (две маленькие)
+                row3 = [
+                    InlineKeyboardButton(
+                        text=texts.t('AUTOPAY_BUTTON', '💳 Автоплатеж'),
+                        callback_data='subscription_autopay',
+                    ),
+                    InlineKeyboardButton(
+                        text=texts.t('CONNECT_BUTTON', '🔗 Подключиться'),
+                        callback_data='subscription_connect',
+                    ),
+                ]
+                keyboard.append(row3)
+
+                # 4 ряд: [Поменять тариф] (одна большая) - если режим тарифов
+                if settings.is_tariffs_mode() and subscription:
+                    # Для суточных тарифов переходим на список тарифов, для обычных - мгновенное переключение
+                    tariff_callback = 'tariff_switch' if is_daily_tariff else 'instant_switch'
+                    keyboard.append(
+                        [
+                            InlineKeyboardButton(
+                                text=texts.t('CHANGE_TARIFF_BUTTON', '📦 Поменять Тариф'), 
+                                callback_data=tariff_callback
+                            )
+                        ]
+                    )
 
     keyboard.append([InlineKeyboardButton(text=texts.BACK, callback_data='back_to_menu')])
 
@@ -2996,7 +3015,7 @@ def get_updated_subscription_settings_keyboard(
     keyboard.append(
         [
             InlineKeyboardButton(
-                text=texts.t('MANAGE_DEVICES_BUTTON', '🔧 Управление устройствами'),
+                text=texts.t('MANAGE_DEVICES_BUTTON', '📱 Устройства'),
                 callback_data='subscription_manage_devices',
             )
         ]
@@ -3038,7 +3057,7 @@ def get_device_management_help_keyboard(language: str = DEFAULT_LANGUAGE) -> Inl
             ],
             [
                 InlineKeyboardButton(
-                    text=texts.t('MANAGE_DEVICES_BUTTON', '🔧 Управление устройствами'),
+                    text=texts.t('MANAGE_DEVICES_BUTTON', '📱 Устройства'),
                     callback_data='subscription_manage_devices',
                 )
             ],

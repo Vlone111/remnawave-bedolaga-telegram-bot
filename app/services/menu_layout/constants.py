@@ -164,6 +164,7 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
             'builtin_id': 'buy_subscription',
             'text': {'ru': 'Купить подписку', 'en': 'Buy subscription'},
             'icon_custom_emoji_id':'5431499171045581032',
+            'style': 'primary',
             'action': 'menu_buy',
             'enabled': True,
             'visibility': 'all',

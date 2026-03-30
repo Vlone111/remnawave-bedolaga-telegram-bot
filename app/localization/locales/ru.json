@@ -971,7 +971,7 @@
   "CHANGE_DEVICES_SUCCESS_DECREASE": "\n    ✅ Количество устройств уменьшено!\n\n    📱 Было: {old_count} → Стало: {new_count}\n    ℹ️ Возврат средств не производится\n    ",
   "CHANGE_DEVICES_SUCCESS_INCREASE": "\n    ✅ Количество устройств увеличено!\n\n    📱 Было: {old_count} → Стало: {new_count}\n    💰 Списано: {amount}\n    ",
   "CHANGE_DEVICES_TITLE": "📱 Изменение количества устройств",
-  "CHANGE_TARIFF_BUTTON": "📦 Тариф",
+  "CHANGE_TARIFF_BUTTON": "📦 Поменять Тариф",
   "CHANNEL_CHECK_BUTTON": "✅ Я подписался",
   "CHANNEL_CHECK_NOT_SUBSCRIBED": "Вы ещё не подписались на все каналы! Подпишитесь и попробуйте снова.",
   "CHANNEL_REQUIRED_TEXT": "Пожалуйста, подпишитесь на обязательные каналы и нажмите кнопку ниже.",
@@ -1491,17 +1491,28 @@
   "SUBSCRIPTION_NOT_FOUND": "❌ Подписка не найдена",
   "SUBSCRIPTION_NO_ACTIVE_LINK": "⚠ У вас нет активной подписки или ссылка еще генерируется",
   "SUBSCRIPTION_NO_SERVERS": "Нет серверов",
+<<<<<<< HEAD
   "SUBSCRIPTION_OVERVIEW_TEMPLATE": "👤 {full_name}\n💰 Баланс: {balance}\n📱 Подписка: {status_emoji} {status_display}{warning}{tariff_info_block}\n\n📱 Информация о подписке\n🎭 Тип: {subscription_type}\n📅 Действует до: {end_date}\n⏰ Осталось: {time_left}\n📈 Трафик: {traffic}\n🌍 Серверы: {servers}\n📱 Устройства: {devices_used} / {device_limit}",
   "SUBSCRIPTION_DAILY_OVERVIEW_TEMPLATE": "👤 {full_name}\n💰 Баланс: {balance}\n📱 Подписка: {status_emoji} {status_display}{warning}{tariff_info_block}\n\n📱 Информация о подписке\n🎭 Тип: {subscription_type}\n📈 Трафик: {traffic}\n🌍 Серверы: {servers}\n📱 Устройства: {devices_used} / {device_limit}",
   "SUBSCRIPTION_DEACTIVATED_CHANNEL_UNSUBSCRIBE": "🚫 Ваша подписка приостановлена, так как вы отписались от обязательного канала.\n\nПодпишитесь на все каналы для восстановления доступа к VPN.",
   "SUBSCRIPTION_DEACTIVATED_CHANNEL_UNSUBSCRIBE_MULTI": "🚫 Ваши подписки приостановлены, так как вы отписались от обязательного канала.\n\nПодпишитесь на все каналы для восстановления доступа к VPN.",
+=======
+  "SUBSCRIPTION_OVERVIEW_TEMPLATE": "👤 {full_name}\n💰 Баланс: {balance}\n📱 Подписка: {status_emoji} {status_display}{warning}\n\n{tariff_name_display}\n📱 Информация о подписке\n🎭 Тип: {subscription_type}\n📅 Действует до: {end_date}\n⏰ Осталось: {time_left}\n📈 Трафик: {traffic}\n📱 Устройства: {devices_used} / {device_limit}",
+  "SUBSCRIPTION_DAILY_OVERVIEW_TEMPLATE": "👤 {full_name}\n💰 Баланс: {balance}\n📱 Подписка: {status_emoji} {status_display}{warning}\n\n{tariff_name_display}\n📱 Информация о подписке\n🎭 Тип: {subscription_type}\n📈 Трафик: {traffic}\n📱 Устройства: {devices_used} / {device_limit}",
+  "SUBSCRIPTION_DEACTIVATED_CHANNEL_UNSUBSCRIBE": "Ваша подписка приостановлена, так как вы отписались от обязательного канала.\n\nПодпишитесь на все каналы для восстановления доступа к VPN.",
+>>>>>>> 6e9bca5d (исправил продлить/изменить подписку кнопки)
   "SUBSCRIPTION_PROMO_DISCOUNT_HINT": "⚡ Активирована доп. скидка {percent}%. \n\nСуммируется с другими скидками!",
   "SUBSCRIPTION_PROMO_DISCOUNT_NOTE": "⚡ Доп. скидка {percent}%: -{amount}",
   "SUBSCRIPTION_PROMO_DISCOUNT_TIMER": "⏳ Скидка действует ещё: {time_left}\n<code>{bar}</code>",
   "SUBSCRIPTION_PURCHASED": "🎉 Подписка успешно приобретена!",
+<<<<<<< HEAD
   "SUBSCRIPTION_REACTIVATED_CHANNEL_SUBSCRIBE": "✅ Ваша подписка восстановлена!\n\nСпасибо за подписку на каналы. VPN снова активен.",
   "SUBSCRIPTION_REACTIVATED_CHANNEL_SUBSCRIBE_MULTI": "✅ Ваши подписки восстановлены!\n\nСпасибо за подписку на каналы. VPN снова активен.",
   "SUBSCRIPTION_SETTINGS_BUTTON": "⚙️ Настройки",
+=======
+  "SUBSCRIPTION_REACTIVATED_CHANNEL_SUBSCRIBE": "Ваша подписка восстановлена!\n\nСпасибо за подписку на каналы. VPN снова активен.",
+  "SUBSCRIPTION_SETTINGS_BUTTON": "📱 Устройства",
+>>>>>>> 6e9bca5d (исправил продлить/изменить подписку кнопки)
   "SUBSCRIPTION_SETTINGS_OVERVIEW": "⚙️ <b>Настройки подписки</b>\n\n📊 <b>Текущие параметры:</b>\n🌐 Стран: {countries_count}\n📈 Трафик: {traffic_used} / {traffic_limit}\n📱 Устройства: {devices_used} / {devices_limit}\n\nВыберите что хотите изменить:",
   "SUBSCRIPTION_SETTINGS_PAID_ONLY": "⚠️ Настройки доступны только для платных подписок",
   "SUBSCRIPTION_SPECIFIC_APP_TITLE": "📱 <b>{app_name} - {device_name}</b>",
