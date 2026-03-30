@@ -508,7 +508,7 @@ async def show_faq_pages(
             ]
         )
 
-    buttons.append([types.InlineKeyboardButton(text=texts.BACK, callback_data='menu_info')])
+    buttons.append([types.InlineKeyboardButton(text=texts.BACK, callback_data='menu_info_faq')])
 
     await callback.message.edit_text(
         caption,
@@ -641,11 +641,11 @@ async def show_faq_page(
         [
             types.InlineKeyboardButton(
                 text=texts.t('FAQ_BACK_TO_LIST', '⬅️ К списку FAQ'),
-                callback_data='menu_faq',
+                callback_data='menu_info_faq',
             )
         ]
     )
-    keyboard_rows.append([types.InlineKeyboardButton(text=texts.BACK, callback_data='menu_info')])
+    keyboard_rows.append([types.InlineKeyboardButton(text=texts.BACK, callback_data='menu_info_faq')])
 
     await callback.message.edit_text(
         message_text,
@@ -1052,7 +1052,10 @@ async def show_faq_menu(
     prompt = texts.t('MENU_FAQ_PROMPT', 'Выберите вопрос:')
     caption = f'{header}\n\n{prompt}' if prompt else header
 
-    keyboard = get_faq_list_keyboard(language=db_user.language)
+    # Получаем FAQ страницы из БД
+    faq_pages = await FaqService.get_pages(db, db_user.language)
+    
+    keyboard = get_faq_list_keyboard(language=db_user.language, faq_pages=faq_pages)
 
     await edit_or_answer_photo(
         callback=callback,
@@ -1082,24 +1085,22 @@ async def show_faq_answer(
     # Извлекаем ID вопроса из callback_data
     question_id = (callback.data or '').split(':', 1)[-1]
 
-    # Заглушки ответов
-    faq_answers = {
-        '1': {'title': '❓ Вопрос 1', 'answer': 'Это ответ на первый вопрос (заглушка)'},
-        '2': {'title': '❓ Вопрос 2', 'answer': 'Это ответ на второй вопрос (заглушка)'},
-        '3': {'title': '❓ Вопрос 3', 'answer': 'Это ответ на третий вопрос (заглушка)'},
-        '4': {'title': '❓ Вопрос 4', 'answer': 'Это ответ на четвертый вопрос (заглушка)'},
-        '5': {'title': '❓ Вопрос 5', 'answer': 'Это ответ на пятый вопрос (заглушка)'},
-    }
-
-    answer_data = faq_answers.get(question_id, {'title': 'Вопрос', 'answer': 'Ответ не найден'})
-
-    caption = f"<b>{answer_data['title']}</b>\n\n{answer_data['answer']}"
+    # Получаем страницу FAQ из БД
+    try:
+        page_id = int(question_id)
+        faq_page = await FaqService.get_page(db, page_id, db_user.language)
+        
+        if faq_page:
+            caption = f"<b>{faq_page.title}</b>\n\n{faq_page.content}"
+        else:
+            caption = texts.t('FAQ_PAGE_NOT_AVAILABLE', 'Эта страница FAQ недоступна.')
+    except (ValueError, Exception):
+        caption = texts.t('FAQ_PAGE_NOT_AVAILABLE', 'Эта страница FAQ недоступна.')
 
     # Клавиатура с кнопкой "Назад к вопросам"
     keyboard = types.InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text=texts.t('BACK_TO_FAQ', '⬅️ Назад к вопросам'), callback_data='menu_faq')],
-            [InlineKeyboardButton(text=texts.BACK, callback_data='back_to_menu')],
+            [InlineKeyboardButton(text=texts.t('BACK_TO_FAQ', '⬅️ Назад к FAQ'), callback_data='menu_faq')],
         ]
     )
 
@@ -1637,10 +1638,11 @@ def register_handlers(dp: Dispatcher):
         F.data == 'menu_info_promo_groups',
     )
 
-    dp.callback_query.register(
-        show_faq_pages,
-        F.data == 'menu_faq',
-    )
+    # FAQ button was removed from info menu, so this handler is no longer used
+    # dp.callback_query.register(
+    #     show_faq_pages,
+    #     F.data == 'menu_info_faq',
+    # )
 
     dp.callback_query.register(
         show_faq_page,

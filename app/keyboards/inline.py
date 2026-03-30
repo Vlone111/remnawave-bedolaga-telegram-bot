@@ -796,15 +796,7 @@ def get_info_menu_keyboard(
 
     buttons: list[list[InlineKeyboardButton]] = []
 
-    if show_faq:
-        buttons.append(
-            [
-                InlineKeyboardButton(
-                    text=texts.t('MENU_FAQ', '❓ FAQ'),
-                    callback_data='menu_faq',
-                )
-            ]
-        )
+    # FAQ больше не добавляем в info-меню - кнопка FAQ теперь только в главном меню
 
     if show_promo_groups:
         buttons.append(
@@ -904,30 +896,42 @@ def get_settings_menu_keyboard(language: str = DEFAULT_LANGUAGE) -> InlineKeyboa
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
-def get_faq_list_keyboard(language: str = DEFAULT_LANGUAGE) -> InlineKeyboardMarkup:
+def get_faq_list_keyboard(language: str = DEFAULT_LANGUAGE, faq_pages=None) -> InlineKeyboardMarkup:
     """Клавиатура для меню FAQ со списком вопросов."""
     texts = get_texts(language)
 
     buttons: list[list[InlineKeyboardButton]] = []
 
-    # Добавляем несколько заглушек вопросов
-    faq_items = [
-        {'id': '1', 'question': '❓ Вопрос 1'},
-        {'id': '2', 'question': '❓ Вопрос 2'},
-        {'id': '3', 'question': '❓ Вопрос 3'},
-        {'id': '4', 'question': '❓ Вопрос 4'},
-        {'id': '5', 'question': '❓ Вопрос 5'},
-    ]
+    # Если переданы страницы FAQ, используем их
+    if faq_pages:
+        for page in faq_pages:
+            buttons.append(
+                [
+                    InlineKeyboardButton(
+                        text=f'❓ {page.title}',
+                        callback_data=f'faq_answer:{page.id}',
+                    )
+                ]
+            )
+    else:
+        # Fallback: заглушки вопросов (если FAQ не загружены)
+        faq_items = [
+            {'id': '1', 'question': '❓ Вопрос 1'},
+            {'id': '2', 'question': '❓ Вопрос 2'},
+            {'id': '3', 'question': '❓ Вопрос 3'},
+            {'id': '4', 'question': '❓ Вопрос 4'},
+            {'id': '5', 'question': '❓ Вопрос 5'},
+        ]
 
-    for item in faq_items:
-        buttons.append(
-            [
-                InlineKeyboardButton(
-                    text=item['question'],
-                    callback_data=f'faq_answer:{item["id"]}',
-                )
-            ]
-        )
+        for item in faq_items:
+            buttons.append(
+                [
+                    InlineKeyboardButton(
+                        text=item['question'],
+                        callback_data=f'faq_answer:{item["id"]}',
+                    )
+                ]
+            )
 
     # Кнопка Назад
     buttons.append([InlineKeyboardButton(text=texts.BACK, callback_data='back_to_menu')])
