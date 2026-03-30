@@ -176,6 +176,16 @@ async def show_main_menu(
 
     menu_text = await get_main_menu_text(db_user, texts, db)
 
+    # Если у пользователя активна подписка, показываем полную информацию о подписке в главном меню
+    menu_text_to_send = menu_text
+    if db_user.subscription and subscription_is_active:
+        try:
+            from app.handlers.subscription.purchase import get_subscription_info_text_for_start
+            menu_text_to_send = await get_subscription_info_text_for_start(db_user, db, texts)
+        except Exception as e:
+            logger.warning('Ошибка при получении текста информации о подписке для меню', error=e)
+            menu_text_to_send = menu_text
+
     draft_exists = await has_subscription_checkout_draft(db_user.id)
     show_resume_checkout = should_offer_checkout_resume(db_user, draft_exists)
 
@@ -216,7 +226,7 @@ async def show_main_menu(
 
     await edit_or_answer_photo(
         callback=callback,
-        caption=menu_text,
+        caption=menu_text_to_send,
         keyboard=keyboard,
         parse_mode='HTML',
     )
@@ -1242,6 +1252,16 @@ async def handle_back_to_menu(callback: types.CallbackQuery, state: FSMContext, 
 
     menu_text = await get_main_menu_text(db_user, texts, db)
 
+    # Если у пользователя активна подписка, показываем полную информацию о подписке в главном меню
+    menu_text_to_send = menu_text
+    if db_user.subscription and subscription_is_active:
+        try:
+            from app.handlers.subscription.purchase import get_subscription_info_text_for_start
+            menu_text_to_send = await get_subscription_info_text_for_start(db_user, db, texts)
+        except Exception as e:
+            logger.warning('Ошибка при получении текста информации о подписке для меню', error=e)
+            menu_text_to_send = menu_text
+
     draft_exists = await has_subscription_checkout_draft(db_user.id)
     show_resume_checkout = should_offer_checkout_resume(db_user, draft_exists)
 
@@ -1282,7 +1302,7 @@ async def handle_back_to_menu(callback: types.CallbackQuery, state: FSMContext, 
 
     await edit_or_answer_photo(
         callback=callback,
-        caption=menu_text,
+        caption=menu_text_to_send,
         keyboard=keyboard,
         parse_mode='HTML',
     )

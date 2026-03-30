@@ -34,6 +34,7 @@ from app.keyboards.admin import (
 from app.localization.texts import get_texts
 from app.states import AdminStates
 from app.utils.decorators import admin_required, error_handler
+from app.utils.timezone import format_local_datetime
 
 
 logger = structlog.get_logger(__name__)
@@ -61,9 +62,9 @@ def _format_contest_summary(contest, texts, tz: ZoneInfo) -> str:
         else texts.t('ADMIN_CONTEST_STATUS_INACTIVE', '⚪️ Выключен')
     )
 
-    period = f'{start_local.strftime("%d.%m %H:%M")} — {end_local.strftime("%d.%m %H:%M")} ({tz.key})'
+    period = f'{format_local_datetime(start_local, "%d.%m %H:%M")} — {format_local_datetime(end_local, "%d.%m %H:%M")} ({tz.key})'
 
-    summary_time = contest.daily_summary_time.strftime('%H:%M') if contest.daily_summary_time else '12:00'
+    summary_time = format_local_datetime(contest.daily_summary_time, '%H:%M') if contest.daily_summary_time else '12:00'
     summary_times = contest.daily_summary_times or summary_time
     parts = [
         f'{status}',
@@ -829,8 +830,13 @@ async def sync_contest(
     lines = [
         '✅ <b>Синхронизация завершена!</b>',
         '',
+<<<<<<< HEAD
         f'📊 <b>Конкурс:</b> {html.escape(contest.title)}',
         f'📅 <b>Период:</b> {contest.start_at.strftime("%d.%m.%Y")} - {contest.end_at.strftime("%d.%m.%Y")}',
+=======
+        f'📊 <b>Конкурс:</b> {contest.title}',
+        f'📅 <b>Период:</b> {format_local_datetime(contest.start_at, "%d.%m.%Y")} - {format_local_datetime(contest.end_at, "%d.%m.%Y")}',
+>>>>>>> 2632f7aa (баг с главной инфой + скрытопулое время)
         '🔍 <b>Фильтр транзакций:</b>',
         f'   <code>{start_str}</code>',
         f'   <code>{end_str}</code>',
@@ -871,8 +877,13 @@ async def sync_contest(
     # Обновляем основное сообщение с новой статистикой
     detailed_stats = await referral_contest_service.get_detailed_contest_stats(db, contest_id)
     general_lines = [
+<<<<<<< HEAD
         f'🏆 <b>{html.escape(contest.title)}</b>',
         f'📅 Период: {contest.start_at.strftime("%d.%m.%Y")} - {contest.end_at.strftime("%d.%m.%Y")}',
+=======
+        f'🏆 <b>{contest.title}</b>',
+        f'📅 Период: {format_local_datetime(contest.start_at, "%d.%m.%Y")} - {format_local_datetime(contest.end_at, "%d.%m.%Y")}',
+>>>>>>> 2632f7aa (баг с главной инфой + скрытопулое время)
         '',
         f'👥 Участников (рефереров): <b>{detailed_stats["total_participants"]}</b>',
         f'📨 Приглашено рефералов: <b>{detailed_stats["total_invited"]}</b>',

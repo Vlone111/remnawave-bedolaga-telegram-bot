@@ -2,7 +2,9 @@
 
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
+
+from app.utils.timezone import format_local_datetime
 
 
 class ServerInfo(BaseModel):
@@ -22,6 +24,11 @@ class TrafficPurchaseInfo(BaseModel):
     created_at: datetime
     days_remaining: int
     progress_percent: float
+
+    @field_serializer('expires_at', 'created_at')
+    def serialize_datetime(self, value: datetime) -> str:
+        """Serialize datetime to local timezone string."""
+        return format_local_datetime(value, '%Y-%m-%dT%H:%M:%S') if value else None
 
 
 class SubscriptionData(BaseModel):
@@ -58,6 +65,11 @@ class SubscriptionData(BaseModel):
     tariff_id: int | None = None
     tariff_name: str | None = None
     traffic_reset_mode: str | None = None
+
+    @field_serializer('start_date', 'end_date', 'next_daily_charge_at')
+    def serialize_datetime(self, value: datetime) -> str:
+        """Serialize datetime to local timezone string."""
+        return format_local_datetime(value, '%Y-%m-%dT%H:%M:%S') if value else None
 
     class Config:
         from_attributes = True

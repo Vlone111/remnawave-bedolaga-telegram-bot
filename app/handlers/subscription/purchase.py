@@ -638,7 +638,7 @@ async def get_subscription_info_text_for_start(
         tariff_name = '—'
 
     # Дата окончания и дни
-    end_date = subscription.end_date.strftime('%d.%m.%Y %H:%M')
+    end_date = format_local_datetime(subscription.end_date, '%d.%m.%Y %H:%M')
     days_left = max(0, (subscription.end_date - current_time).days)
 
     # Трафик

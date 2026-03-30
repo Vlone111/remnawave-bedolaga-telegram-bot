@@ -48,7 +48,11 @@ from app.services.user_service import UserService
 from app.states import AdminStates
 from app.utils.decorators import admin_required, error_handler
 from app.utils.formatters import format_datetime, format_time_ago
+<<<<<<< HEAD
 from app.utils.formatting import user_html_link
+=======
+from app.utils.timezone import format_local_datetime
+>>>>>>> 2632f7aa (баг с главной инфой + скрытопулое время)
 from app.utils.subscription_utils import (
     resolve_hwid_device_limit_for_payload,
 )
@@ -2834,7 +2838,7 @@ async def show_user_statistics(callback: types.CallbackQuery, db_user: User, db:
     elif campaign_registration and campaign_registration.campaign:
         text += f'• Регистрация через рекламную кампанию <b>{html.escape(campaign_registration.campaign.name)}</b>\n'
         if campaign_registration.created_at:
-            text += f'• Дата регистрации по кампании: {campaign_registration.created_at.strftime("%d.%m.%Y %H:%M")}\n'
+            text += f'• Дата регистрации по кампании: {format_local_datetime(campaign_registration.created_at, "%d.%m.%Y %H:%M")}\n'
     else:
         text += '• Прямая регистрация\n'
 

@@ -20,6 +20,7 @@ from app.keyboards.inline import (
 from app.localization.texts import get_texts
 from app.states import BalanceStates
 from app.utils.decorators import error_handler
+from app.utils.timezone import format_local_datetime
 
 
 logger = structlog.get_logger(__name__)
@@ -235,8 +236,13 @@ async def show_balance_history(callback: types.CallbackQuery, db_user: User, db:
         )
 
         text += f'{emoji} {amount_text}\n'
+<<<<<<< HEAD
         text += f'📝 {html.escape(transaction.description or "")}\n'
         text += f'📅 {transaction.created_at.strftime("%d.%m.%Y %H:%M")}\n\n'
+=======
+        text += f'📝 {transaction.description}\n'
+        text += f'📅 {format_local_datetime(transaction.created_at, "%d.%m.%Y %H:%M")}\n\n'
+>>>>>>> 2632f7aa (баг с главной инфой + скрытопулое время)
 
     keyboard = []
     total_pages = (total_unique + TRANSACTIONS_PER_PAGE - 1) // TRANSACTIONS_PER_PAGE

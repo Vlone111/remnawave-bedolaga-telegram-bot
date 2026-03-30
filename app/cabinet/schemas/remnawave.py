@@ -3,7 +3,9 @@
 from datetime import datetime
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
+
+from app.utils.timezone import format_local_datetime
 
 
 # ============ Status & Connection ============
@@ -91,6 +93,12 @@ class SystemStatsResponse(BaseModel):
     nodes_weekly: list[dict[str, Any]] = Field(default_factory=list)
     last_updated: datetime | None = None
 
+    @field_serializer('last_updated')
+    def serialize_datetime(self, value: datetime) -> str | None:
+        if value is None:
+            return None
+        return format_local_datetime(value, '%Y-%m-%dT%H:%M:%S')
+
 
 # ============ Nodes ============
 
@@ -123,6 +131,12 @@ class NodeInfo(BaseModel):
     system: dict[str, Any] | None = None
     active_plugin_uuid: str | None = None
 
+    @field_serializer('last_status_change', 'created_at', 'updated_at')
+    def serialize_datetime(self, value: datetime) -> str | None:
+        if value is None:
+            return None
+        return format_local_datetime(value, '%Y-%m-%dT%H:%M:%S')
+
 
 class NodesListResponse(BaseModel):
     """List of nodes response."""
@@ -149,6 +163,12 @@ class NodeStatisticsResponse(BaseModel):
     realtime: dict[str, Any] | None = None
     usage_history: list[dict[str, Any]] = Field(default_factory=list)
     last_updated: datetime | None = None
+
+    @field_serializer('last_updated')
+    def serialize_datetime(self, value: datetime) -> str | None:
+        if value is None:
+            return None
+        return format_local_datetime(value, '%Y-%m-%dT%H:%M:%S')
 
 
 class NodeUsageResponse(BaseModel):

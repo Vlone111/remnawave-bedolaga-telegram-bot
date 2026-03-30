@@ -1513,6 +1513,16 @@ async def complete_registration_from_callback(callback: types.CallbackQuery, sta
 
         menu_text = await get_main_menu_text(existing_user, texts, db)
 
+        # Если у пользователя активна подписка, показываем полную информацию о подписке в главном меню
+        menu_text_to_send = menu_text
+        if existing_user.subscription and subscription_is_active:
+            try:
+                from app.handlers.subscription.purchase import get_subscription_info_text_for_start
+                menu_text_to_send = await get_subscription_info_text_for_start(existing_user, db, texts)
+            except Exception as e:
+                logger.warning('Ошибка при получении текста информации о подписке для /start', error=e)
+                menu_text_to_send = menu_text
+
         is_admin = settings.is_admin(existing_user.telegram_id)
         is_moderator = (not is_admin) and SupportSettingsService.is_moderator(existing_user.telegram_id)
 
@@ -1542,7 +1552,7 @@ async def complete_registration_from_callback(callback: types.CallbackQuery, sta
             )
             if pinned_message and pinned_message.send_before_menu:
                 await _send_pinned_message(callback.bot, db, existing_user, pinned_message)
-            await callback.message.answer(menu_text, reply_markup=keyboard, parse_mode='HTML')
+            await callback.message.answer(menu_text_to_send, reply_markup=keyboard, parse_mode='HTML')
             if pinned_message and not pinned_message.send_before_menu:
                 await _send_pinned_message(callback.bot, db, existing_user, pinned_message)
         except Exception as e:
@@ -1832,6 +1842,16 @@ async def complete_registration(message: types.Message, state: FSMContext, db: A
 
         menu_text = await get_main_menu_text(existing_user, texts, db)
 
+        # Если у пользователя активна подписка, показываем полную информацию о подписке в главном меню
+        menu_text_to_send = menu_text
+        if existing_user.subscription and subscription_is_active:
+            try:
+                from app.handlers.subscription.purchase import get_subscription_info_text_for_start
+                menu_text_to_send = await get_subscription_info_text_for_start(existing_user, db, texts)
+            except Exception as e:
+                logger.warning('Ошибка при получении текста информации о подписке для /start', error=e)
+                menu_text_to_send = menu_text
+
         is_admin = settings.is_admin(existing_user.telegram_id)
         is_moderator = (not is_admin) and SupportSettingsService.is_moderator(existing_user.telegram_id)
 
@@ -1861,7 +1881,7 @@ async def complete_registration(message: types.Message, state: FSMContext, db: A
             )
             if pinned_message and pinned_message.send_before_menu:
                 await _send_pinned_message(message.bot, db, existing_user, pinned_message)
-            await message.answer(menu_text, reply_markup=keyboard, parse_mode='HTML')
+            await message.answer(menu_text_to_send, reply_markup=keyboard, parse_mode='HTML')
             if pinned_message and not pinned_message.send_before_menu:
                 await _send_pinned_message(message.bot, db, existing_user, pinned_message)
         except Exception as e:
@@ -2114,6 +2134,16 @@ async def complete_registration(message: types.Message, state: FSMContext, db: A
 
         menu_text = await get_main_menu_text(user, texts, db)
 
+        # Если у пользователя активна подписка, показываем полную информацию о подписке в главном меню
+        menu_text_to_send = menu_text
+        if user.subscription and subscription_is_active:
+            try:
+                from app.handlers.subscription.purchase import get_subscription_info_text_for_start
+                menu_text_to_send = await get_subscription_info_text_for_start(user, db, texts)
+            except Exception as e:
+                logger.warning('Ошибка при получении текста информации о подписке для /start', error=e)
+                menu_text_to_send = menu_text
+
         is_admin = settings.is_admin(user.telegram_id)
         is_moderator = (not is_admin) and SupportSettingsService.is_moderator(user.telegram_id)
 
@@ -2142,7 +2172,7 @@ async def complete_registration(message: types.Message, state: FSMContext, db: A
             )
             if pinned_message and pinned_message.send_before_menu:
                 await _send_pinned_message(message.bot, db, user, pinned_message)
-            await message.answer(menu_text, reply_markup=keyboard, parse_mode='HTML')
+            await message.answer(menu_text_to_send, reply_markup=keyboard, parse_mode='HTML')
             logger.info('✅ Главное меню показано пользователю', telegram_id=user.telegram_id)
             if pinned_message and not pinned_message.send_before_menu:
                 await _send_pinned_message(message.bot, db, user, pinned_message)
