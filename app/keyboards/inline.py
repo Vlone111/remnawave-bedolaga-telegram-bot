@@ -682,7 +682,12 @@ def get_main_menu_keyboard(
 
     keyboard.append([InlineKeyboardButton(text=balance_button_text, callback_data='menu_balance')])
 
-    show_trial = not has_had_paid_subscription and not has_active_subscription
+    # Показываем триал только если пользователь:
+    # 1. Никогда не купил платную подписку
+    # 2. Не имеет активной подписки (ни триальной, ни платной)
+    # 3. Никогда не использовал триал (даже если подписка закончилась/отключена)
+    has_had_trial = subscription and getattr(subscription, 'is_trial', False)
+    show_trial = not has_had_paid_subscription and not has_active_subscription and not has_had_trial
 
     show_buy = not has_active_subscription or not subscription_is_active
     current_subscription = subscription

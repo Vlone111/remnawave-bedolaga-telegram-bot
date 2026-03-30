@@ -149,7 +149,7 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
             'action': 'menu_trial',
             'enabled': True,
             'visibility': 'all',
-            'conditions': {'show_trial': True},
+            'conditions': {'show_trial': True, 'has_not_used_trial': True},
             'dynamic_text': False,
         },
         'buy_subscription': {

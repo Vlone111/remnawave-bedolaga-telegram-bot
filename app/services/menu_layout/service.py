@@ -789,6 +789,20 @@ class MenuLayoutService:
             if context.has_had_paid_subscription or context.has_active_subscription:
                 return False
 
+        # has_not_used_trial - пользователь ещё не использовал ни один триал
+        if conditions.get('has_not_used_trial') is True:
+            # Блокируем если есть активная подписка (триал или платная)
+            if context.has_active_subscription:
+                return False
+            # Блокируем если когда-либо была платная подписка
+            if context.has_had_paid_subscription:
+                return False
+            # Блокируем если когда-либо была триальная подписка
+            if context.subscription:
+                is_trial = getattr(context.subscription, 'is_trial', False)
+                if is_trial:
+                    return False
+
         # show_buy
         if conditions.get('show_buy') is True:
             if context.has_active_subscription and context.subscription_is_active:
