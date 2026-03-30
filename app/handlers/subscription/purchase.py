@@ -625,26 +625,6 @@ async def get_subscription_info_text_for_start(
     await db.refresh(db_user)
     current_time = datetime.now(UTC)
 
-    # Статус и эмодзи
-    if subscription.status == 'limited':
-        status_emoji = '⚠️'
-        status_display = 'Лимит'
-    elif subscription.status == 'disabled':
-        status_emoji = '⏸️'
-        status_display = 'Приостановлена'
-    elif subscription.status == 'expired' or subscription.end_date <= current_time:
-        status_emoji = '🔴'
-        status_display = 'Истекла'
-    elif subscription.status == 'active' and subscription.end_date > current_time:
-        status_emoji = '💎'
-        status_display = 'Активна'
-    else:
-        status_emoji = '❓'
-        status_display = 'Неизвестно'
-
-    # Баланс
-    balance = settings.format_price(db_user.balance_kopeks)
-
     # Название тарифа
     tariff_name = getattr(subscription, 'tariff_name', None) or getattr(subscription, 'tariff', None)
     if hasattr(tariff_name, 'name'):
@@ -683,24 +663,24 @@ async def get_subscription_info_text_for_start(
     devices_str = f'{devices_count} / {device_limit}'
     connected_devices = ''
     if devices_list:
-        connected_devices = 'Подключенные устройства:'
+        connected_devices = '<blockquote>📱 <b>Подключенные устройства:</b>'
         for device in devices_list[:5]:
             platform = device.get('platform', 'Unknown')
             device_model = device.get('deviceModel', 'Unknown')
             device_info = f'{platform} - {device_model}'
             connected_devices += f'\n• {device_info}'
+        connected_devices += '</blockquote>'
 
     # Ссылка
     subscription_link = get_display_subscription_link(subscription)
     link_str = ''
     if subscription_link:
-        link_str = f'Скопируйте ссылку и добавьте в ваше VPN приложение: {subscription_link}'
+        link_str = f'🔗 Скопируйте ссылку и добавьте в ваше VPN приложение:\n{subscription_link}'
 
-    # Итоговый текст
+    # Итоговый текст с форматированием в виде блоков
     msg = f"""👤 {db_user.full_name}
-💰 Баланс: {balance}
+
 📦 Подписка: {tariff_name}
-{status_emoji} {status_display}
 📅 Действует до: {end_date} (ост. {days_left} дн.)
 📈 Трафик: {traffic_str}
 📱 Устройства: {devices_str}"""
@@ -708,8 +688,9 @@ async def get_subscription_info_text_for_start(
     if connected_devices:
         msg += f"\n\n{connected_devices}"
     if link_str:
-        msg += f"\n\n🔗 {link_str}"
+        msg += f"\n\n{link_str}"
     return msg.strip()
+
 
 
 async def show_trial_offer(
