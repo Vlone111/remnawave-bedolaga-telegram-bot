@@ -1020,7 +1020,7 @@ class MenuLayoutService:
         open_mode = button_config.get('open_mode', 'callback')
         webapp_url = button_config.get('webapp_url')
         icon = button_config.get('icon', '')
-
+        icon_custom_emoji_id = button_config.get('icon_custom_emoji_id') or None
         # Логирование для отладки кнопки connect
         is_connect_button = (
             effective_button_id == 'connect'
@@ -1059,7 +1059,7 @@ class MenuLayoutService:
             return InlineKeyboardButton(text=text, web_app=types.WebAppInfo(url=action))
         if button_type == 'callback':
             # Кастомная кнопка с callback_data
-            return InlineKeyboardButton(text=text, callback_data=action)
+            return InlineKeyboardButton(text=text, callback_data=action, icon_custom_emoji_id=icon_custom_emoji_id)
         # builtin - проверяем open_mode
         if open_mode == 'direct':
             # Прямое открытие Mini App через WebAppInfo
@@ -1093,10 +1093,10 @@ class MenuLayoutService:
                 value='есть' if context.subscription else 'нет',
             )
             # Fallback на callback_data
-            return InlineKeyboardButton(text=text, callback_data=action)
+            return InlineKeyboardButton(text=text, callback_data=action, icon_custom_emoji_id=icon_custom_emoji_id)
         # Стандартный callback_data
         logger.debug('Кнопка connect: open_mode=, используем callback_data', open_mode=open_mode, action=action)
-        return InlineKeyboardButton(text=text, callback_data=action)
+        return InlineKeyboardButton(text=text, callback_data=action, icon_custom_emoji_id=icon_custom_emoji_id)
 
     # --- Построение клавиатуры ---
 

@@ -93,7 +93,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'connect': {
             'type': 'builtin',
             'builtin_id': 'connect',
-            'text': {'ru': '🔗 Подключиться', 'en': '🔗 Connect'},
+            'text': {'ru': 'Подключиться', 'en': 'Connect'},
+            'icon_custom_emoji_id':'5343789187172670307',
             'action': 'subscription_connect',
             'enabled': True,
             'visibility': 'subscribers',
@@ -115,7 +116,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'subscription': {
             'type': 'builtin',
             'builtin_id': 'subscription',
-            'text': {'ru': '📊 Продлить/Изменить подписку', 'en': '📊 Extend/Change subscription'},
+            'text': {'ru': 'Продлить/Изменить подписку', 'en': 'Extend/Change subscription'},
+            'icon_custom_emoji_id':'5231200819986047254',
             'action': 'menu_subscription',
             'enabled': True,
             'visibility': 'subscribers',
@@ -125,7 +127,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'buy_traffic': {
             'type': 'builtin',
             'builtin_id': 'buy_traffic',
-            'text': {'ru': '📈 Докупить трафик', 'en': '📈 Buy traffic'},
+            'text': {'ru': 'Докупить трафик', 'en': 'Buy traffic'},
+            'icon_custom_emoji_id':'5282950412784117735',
             'action': 'buy_traffic',
             'enabled': True,
             'visibility': 'subscribers',
@@ -135,7 +138,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'balance': {
             'type': 'builtin',
             'builtin_id': 'balance',
-            'text': {'ru': '💰 Баланс: {balance}', 'en': '💰 Balance: {balance}'},
+            'text': {'ru': 'Баланс: {balance}', 'en': 'Balance: {balance}'},
+            'icon_custom_emoji_id':'5224257782013769471',
             'action': 'menu_balance',
             'enabled': True,
             'visibility': 'all',
@@ -145,7 +149,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'trial': {
             'type': 'builtin',
             'builtin_id': 'trial',
-            'text': {'ru': '🎁 Пробный период', 'en': '🎁 Free trial'},
+            'text': {'ru': 'Пробный период', 'en': 'Free trial'},
+            'icon_custom_emoji_id':'5449800250032143374',
             'action': 'menu_trial',
             'enabled': True,
             'visibility': 'all',
@@ -155,7 +160,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'buy_subscription': {
             'type': 'builtin',
             'builtin_id': 'buy_subscription',
-            'text': {'ru': '🛒 Купить подписку', 'en': '🛒 Buy subscription'},
+            'text': {'ru': 'Купить подписку', 'en': 'Buy subscription'},
+            'icon_custom_emoji_id':'5431499171045581032',
             'action': 'menu_buy',
             'enabled': True,
             'visibility': 'all',
@@ -165,7 +171,7 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'simple_subscription': {
             'type': 'builtin',
             'builtin_id': 'simple_subscription',
-            'text': {'ru': '💳 Простая подписка', 'en': '💳 Simple subscription'},
+            'text': {'ru': 'Простая подписка', 'en': 'Simple subscription'},
             'action': 'simple_subscription_purchase',
             'enabled': True,
             'visibility': 'all',
@@ -175,7 +181,7 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'resume_checkout': {
             'type': 'builtin',
             'builtin_id': 'resume_checkout',
-            'text': {'ru': '↩️ Вернуться к оформлению', 'en': '↩️ Resume checkout'},
+            'text': {'ru': 'Вернуться к оформлению', 'en': 'Resume checkout'},
             'action': 'return_to_saved_cart',
             'enabled': True,
             'visibility': 'all',
@@ -185,7 +191,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'promocode': {
             'type': 'builtin',
             'builtin_id': 'promocode',
-            'text': {'ru': '🎟️ Промокод', 'en': '🎟️ Promo code'},
+            'text': {'ru': 'Промокод', 'en': 'Promo code'},
+            'icon_custom_emoji_id':'5377599075237502153',
             'action': 'menu_promocode',
             'enabled': True,
             'visibility': 'all',
@@ -195,7 +202,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'referrals': {
             'type': 'builtin',
             'builtin_id': 'referrals',
-            'text': {'ru': '👥 Рефералы', 'en': '👥 Referrals'},
+            'text': {'ru': 'Рефералы', 'en': 'Referrals'},
+            'icon_custom_emoji_id':'5372926953978341366',             
             'action': 'menu_referrals',
             'enabled': True,
             'visibility': 'all',
@@ -205,7 +213,7 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'contests': {
             'type': 'builtin',
             'builtin_id': 'contests',
-            'text': {'ru': '🎲 Конкурсы', 'en': '🎲 Contests'},
+            'text': {'ru': 'Конкурсы', 'en': 'Contests'},
             'action': 'contests_menu',
             'enabled': True,
             'visibility': 'all',
@@ -215,7 +223,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'faq': {
             'type': 'builtin',
             'builtin_id': 'faq',
-            'text': {'ru': '❓ FAQ', 'en': '❓ FAQ'},
+            'text': {'ru': 'FAQ', 'en': 'FAQ'},
+            'icon_custom_emoji_id':'5436113877181941026',
             'action': 'menu_faq',
             'enabled': True,
             'visibility': 'all',
@@ -225,7 +234,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'support': {
             'type': 'builtin',
             'builtin_id': 'support',
-            'text': {'ru': '💬 Поддержка', 'en': '💬 Support'},
+            'text': {'ru': 'Поддержка', 'en': 'Support'},
+            'icon_custom_emoji_id':'5443038326535759644',
             'action': 'menu_support',
             'enabled': True,
             'visibility': 'all',
@@ -235,7 +245,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'settings': {
             'type': 'builtin',
             'builtin_id': 'settings',
-            'text': {'ru': '⚙️ Настройки', 'en': '⚙️ Settings'},
+            'text': {'ru': 'Настройки', 'en': 'Settings'},
+            'icon_custom_emoji_id':'5341715473882955310',
             'action': 'menu_settings',
             'enabled': True,
             'visibility': 'all',
@@ -245,7 +256,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'info': {
             'type': 'builtin',
             'builtin_id': 'info',
-            'text': {'ru': 'ℹ️ Инфо', 'en': 'ℹ️ Info'},
+            'text': {'ru': 'Инфо', 'en': 'Info'},
+            'icon_custom_emoji_id':'5334544901428229844',
             'action': 'menu_info',
             'enabled': True,
             'visibility': 'all',
@@ -255,7 +267,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'language': {
             'type': 'builtin',
             'builtin_id': 'language',
-            'text': {'ru': '🌐 Язык', 'en': '🌐 Language'},
+            'text': {'ru': 'Язык', 'en': 'Language'},
+            'icon_custom_emoji_id':'5373189526803980816',
             'action': 'menu_language',
             'enabled': True,
             'visibility': 'all',
@@ -265,7 +278,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'admin_panel': {
             'type': 'builtin',
             'builtin_id': 'admin_panel',
-            'text': {'ru': '⚙️ Админ панель', 'en': '⚙️ Admin panel'},
+            'text': {'ru': 'Админ панель', 'en': 'Admin panel'},
+            'icon_custom_emoji_id':'5341715473882955310',
             'action': 'admin_panel',
             'enabled': True,
             'visibility': 'admins',
@@ -275,7 +289,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         'moderator_panel': {
             'type': 'builtin',
             'builtin_id': 'moderator_panel',
-            'text': {'ru': '🧑‍⚖️ Модерация', 'en': '🧑‍⚖️ Moderation'},
+            'text': {'ru': 'Модерация', 'en': 'Moderation'},
+            'icon_custom_emoji_id':'5339513551524481000',
             'action': 'moderator_panel',
             'enabled': True,
             'visibility': 'moderators',
