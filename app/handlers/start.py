@@ -865,9 +865,20 @@ async def cmd_start(message: types.Message, state: FSMContext, db: AsyncSession,
                 has_active_subscription=has_active_subscription,
                 subscription_is_active=subscription_is_active,
             )
-
+        # Совмещаем: получаем инфу о подписках из апдейта
         user_subs = getattr(user, 'subscriptions', None) or []
         first_sub = next((s for s in user_subs if s.is_active), user_subs[0] if user_subs else None)
+
+        # Твоя логика: если есть активная подписка (теперь через first_sub)
+        menu_text_to_send = menu_text
+        if first_sub and first_sub.is_active:
+            try:
+                from app.handlers.subscription.purchase import get_subscription_info_text_for_start
+                # Передаем first_sub вместо старого user.subscription, если функция это поддерживает
+                menu_text_to_send = await get_subscription_info_text_for_start(user, db, texts)
+            except Exception as e:
+                logger.warning('Ошибка при получении текста информации о подписке для /start', error=e)
+                menu_text_to_send = menu_text
         keyboard = await get_main_menu_keyboard_async(
             db=db,
             user=user,
@@ -881,7 +892,7 @@ async def cmd_start(message: types.Message, state: FSMContext, db: AsyncSession,
             is_moderator=is_moderator,
             custom_buttons=custom_buttons,
         )
-        await message.answer(menu_text, reply_markup=keyboard, parse_mode='HTML')
+        await message.answer(menu_text_to_send, reply_markup=keyboard, parse_mode='HTML')
 
         if pinned_message and not pinned_message.send_before_menu:
             await _send_pinned_message(message.bot, db, user, pinned_message)
