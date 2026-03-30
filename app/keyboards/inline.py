@@ -904,6 +904,37 @@ def get_settings_menu_keyboard(language: str = DEFAULT_LANGUAGE) -> InlineKeyboa
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
+def get_faq_list_keyboard(language: str = DEFAULT_LANGUAGE) -> InlineKeyboardMarkup:
+    """Клавиатура для меню FAQ со списком вопросов."""
+    texts = get_texts(language)
+
+    buttons: list[list[InlineKeyboardButton]] = []
+
+    # Добавляем несколько заглушек вопросов
+    faq_items = [
+        {'id': '1', 'question': '❓ Вопрос 1'},
+        {'id': '2', 'question': '❓ Вопрос 2'},
+        {'id': '3', 'question': '❓ Вопрос 3'},
+        {'id': '4', 'question': '❓ Вопрос 4'},
+        {'id': '5', 'question': '❓ Вопрос 5'},
+    ]
+
+    for item in faq_items:
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text=item['question'],
+                    callback_data=f'faq_answer:{item["id"]}',
+                )
+            ]
+        )
+
+    # Кнопка Назад
+    buttons.append([InlineKeyboardButton(text=texts.BACK, callback_data='back_to_menu')])
+
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
+
+
 def get_happ_download_button_row(texts) -> list[InlineKeyboardButton] | None:
     if not settings.is_happ_download_button_enabled():
         return None
@@ -2583,7 +2614,11 @@ def get_device_selection_keyboard(
             ]
         )
 
+<<<<<<< HEAD
     keyboard.append([InlineKeyboardButton(text=texts.BACK, callback_data=back_cb)])
+=======
+    keyboard.append([InlineKeyboardButton(text=texts.BACK, callback_data='back_to_menu')])
+>>>>>>> 620515b8 (все кнопки на своих местах)
 
     return InlineKeyboardMarkup(inline_keyboard=keyboard)
 

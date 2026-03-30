@@ -19,6 +19,7 @@ from app.database.crud.user_message import get_random_active_message
 from app.database.models import PromoGroup, User
 from app.handlers.subscription.traffic import add_traffic, handle_add_traffic
 from app.keyboards.inline import (
+    get_faq_list_keyboard,
     get_info_menu_keyboard,
     get_language_selection_keyboard,
     get_main_menu_keyboard_async,
@@ -1031,6 +1032,86 @@ async def show_settings_menu(
     await callback.answer()
 
 
+async def show_faq_menu(
+    callback: types.CallbackQuery,
+    db_user: User,
+    db: AsyncSession,
+):
+    """Показывает меню с вопросами FAQ."""
+    if db_user is None:
+        texts = get_texts(settings.DEFAULT_LANGUAGE)
+        await callback.answer(
+            texts.t('USER_NOT_FOUND_ERROR', 'Ошибка: пользователь не найден.'),
+            show_alert=True,
+        )
+        return
+
+    texts = get_texts(db_user.language)
+
+    header = texts.t('MENU_FAQ_HEADER', '❓ <b>Часто задаваемые вопросы</b>')
+    prompt = texts.t('MENU_FAQ_PROMPT', 'Выберите вопрос:')
+    caption = f'{header}\n\n{prompt}' if prompt else header
+
+    keyboard = get_faq_list_keyboard(language=db_user.language)
+
+    await edit_or_answer_photo(
+        callback=callback,
+        caption=caption,
+        keyboard=keyboard,
+        parse_mode='HTML',
+    )
+    await callback.answer()
+
+
+async def show_faq_answer(
+    callback: types.CallbackQuery,
+    db_user: User,
+    db: AsyncSession,
+):
+    """Показывает ответ на вопрос FAQ."""
+    if db_user is None:
+        texts = get_texts(settings.DEFAULT_LANGUAGE)
+        await callback.answer(
+            texts.t('USER_NOT_FOUND_ERROR', 'Ошибка: пользователь не найден.'),
+            show_alert=True,
+        )
+        return
+
+    texts = get_texts(db_user.language)
+
+    # Извлекаем ID вопроса из callback_data
+    question_id = (callback.data or '').split(':', 1)[-1]
+
+    # Заглушки ответов
+    faq_answers = {
+        '1': {'title': '❓ Вопрос 1', 'answer': 'Это ответ на первый вопрос (заглушка)'},
+        '2': {'title': '❓ Вопрос 2', 'answer': 'Это ответ на второй вопрос (заглушка)'},
+        '3': {'title': '❓ Вопрос 3', 'answer': 'Это ответ на третий вопрос (заглушка)'},
+        '4': {'title': '❓ Вопрос 4', 'answer': 'Это ответ на четвертый вопрос (заглушка)'},
+        '5': {'title': '❓ Вопрос 5', 'answer': 'Это ответ на пятый вопрос (заглушка)'},
+    }
+
+    answer_data = faq_answers.get(question_id, {'title': 'Вопрос', 'answer': 'Ответ не найден'})
+
+    caption = f"<b>{answer_data['title']}</b>\n\n{answer_data['answer']}"
+
+    # Клавиатура с кнопкой "Назад к вопросам"
+    keyboard = types.InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text=texts.t('BACK_TO_FAQ', '⬅️ Назад к вопросам'), callback_data='menu_faq')],
+            [InlineKeyboardButton(text=texts.BACK, callback_data='back_to_menu')],
+        ]
+    )
+
+    await edit_or_answer_photo(
+        callback=callback,
+        caption=caption,
+        keyboard=keyboard,
+        parse_mode='HTML',
+    )
+    await callback.answer()
+
+
 async def handle_back_to_menu(callback: types.CallbackQuery, state: FSMContext, db_user: User, db: AsyncSession):
     if db_user is None:
         # Пользователь не найден, используем язык по умолчанию
@@ -1587,6 +1668,16 @@ def register_handlers(dp: Dispatcher):
     )
 
     dp.callback_query.register(show_language_menu, F.data == 'menu_language')
+
+    dp.callback_query.register(
+        show_faq_menu,
+        F.data == 'menu_faq',
+    )
+
+    dp.callback_query.register(
+        show_faq_answer,
+        F.data.startswith('faq_answer:'),
+    )
 
     dp.callback_query.register(process_language_change, F.data.startswith('language_select:'), StateFilter(None))
 

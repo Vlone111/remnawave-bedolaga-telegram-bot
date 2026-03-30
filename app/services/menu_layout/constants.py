@@ -11,9 +11,9 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
     'version': 1,
     'rows': [
         {
-            'id': 'connect_row',
-            'buttons': ['connect'],
-            'conditions': {'has_active_subscription': True, 'subscription_is_active': True},
+            'id': 'subscription_row',
+            'buttons': ['subscription'],
+            'conditions': {'has_active_subscription': True},
             'max_per_row': 1,
         },
         {
@@ -24,8 +24,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         },
         {
             'id': 'subscription_traffic_row',
-            'buttons': ['subscription', 'buy_traffic'],
-            'conditions': {'has_active_subscription': True},
+            'buttons': ['balance', 'support'],
+            'conditions': None,
             'max_per_row': 2,
         },
         {
@@ -36,7 +36,7 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
         },
         {
             'id': 'trial_balance_row',
-            'buttons': ['trial', 'balance'],
+            'buttons': ['trial'],
             'conditions': None,
             'max_per_row': 2,
         },
@@ -65,8 +65,8 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
             'max_per_row': 2,
         },
         {
-            'id': 'support_settings_row',
-            'buttons': ['support', 'settings'],
+            'id': 'faq_settings_row',
+            'buttons': ['faq', 'settings'],
             'conditions': None,
             'max_per_row': 2,
         },
@@ -80,6 +80,12 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
             'id': 'moderator_row',
             'buttons': ['moderator_panel'],
             'conditions': {'is_moderator': True},
+            'max_per_row': 1,
+        },
+        {
+            'id': 'connect_bottom_row',
+            'buttons': ['connect'],
+            'conditions': {'has_active_subscription': True, 'subscription_is_active': True},
             'max_per_row': 1,
         },
     ],
@@ -201,6 +207,16 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
             'builtin_id': 'contests',
             'text': {'ru': '🎲 Конкурсы', 'en': '🎲 Contests'},
             'action': 'contests_menu',
+            'enabled': True,
+            'visibility': 'all',
+            'conditions': None,
+            'dynamic_text': False,
+        },
+        'faq': {
+            'type': 'builtin',
+            'builtin_id': 'faq',
+            'text': {'ru': '❓ FAQ', 'en': '❓ FAQ'},
+            'action': 'menu_faq',
             'enabled': True,
             'visibility': 'all',
             'conditions': None,
@@ -355,6 +371,13 @@ BUILTIN_BUTTONS_INFO: list[dict[str, Any]] = [
         'default_text': {'ru': '🎲 Конкурсы', 'en': '🎲 Contests'},
         'callback_data': 'contests_menu',
         'default_conditions': {'contests_visible': True},
+        'supports_dynamic_text': False,
+    },
+    {
+        'id': 'faq',
+        'default_text': {'ru': '❓ FAQ', 'en': '❓ FAQ'},
+        'callback_data': 'menu_faq',
+        'default_conditions': None,
         'supports_dynamic_text': False,
     },
     {

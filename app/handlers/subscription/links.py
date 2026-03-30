@@ -100,7 +100,11 @@ async def handle_connect_subscription(
                         web_app=types.WebAppInfo(url=subscription_link),
                     )
                 ],
+<<<<<<< HEAD
                 [InlineKeyboardButton(text=texts.BACK, callback_data=back_cb)],
+=======
+                [InlineKeyboardButton(text=texts.BACK, callback_data='back_to_menu')],
+>>>>>>> 620515b8 (все кнопки на своих местах)
             ]
         )
 
@@ -134,7 +138,11 @@ async def handle_connect_subscription(
                         web_app=types.WebAppInfo(url=settings.MINIAPP_CUSTOM_URL),
                     )
                 ],
+<<<<<<< HEAD
                 [InlineKeyboardButton(text=texts.BACK, callback_data=back_cb)],
+=======
+                [InlineKeyboardButton(text=texts.BACK, callback_data='back_to_menu')],
+>>>>>>> 620515b8 (все кнопки на своих местах)
             ]
         )
 
@@ -154,7 +162,11 @@ async def handle_connect_subscription(
         happ_row = get_happ_download_button_row(texts)
         if happ_row:
             rows.append(happ_row)
+<<<<<<< HEAD
         rows.append([InlineKeyboardButton(text=texts.BACK, callback_data=back_cb)])
+=======
+        rows.append([InlineKeyboardButton(text=texts.BACK, callback_data='back_to_menu')])
+>>>>>>> 620515b8 (все кнопки на своих местах)
 
         keyboard = InlineKeyboardMarkup(inline_keyboard=rows)
 
@@ -182,7 +194,11 @@ async def handle_connect_subscription(
         happ_row = get_happ_download_button_row(texts)
         if happ_row:
             rows.append(happ_row)
+<<<<<<< HEAD
         rows.append([InlineKeyboardButton(text=texts.BACK, callback_data=back_cb)])
+=======
+        rows.append([InlineKeyboardButton(text=texts.BACK, callback_data='back_to_menu')])
+>>>>>>> 620515b8 (все кнопки на своих местах)
 
         keyboard = InlineKeyboardMarkup(inline_keyboard=rows)
 
@@ -216,7 +232,11 @@ async def handle_connect_subscription(
                 ),
                 reply_markup=InlineKeyboardMarkup(
                     inline_keyboard=[
+<<<<<<< HEAD
                         [InlineKeyboardButton(text=texts.BACK, callback_data=back_cb)],
+=======
+                        [InlineKeyboardButton(text=texts.BACK, callback_data='back_to_menu')],
+>>>>>>> 620515b8 (все кнопки на своих местах)
                     ]
                 ),
                 parse_mode='HTML',
@@ -361,7 +381,11 @@ async def handle_open_subscription_link(
                         else 'subscription_connect',
                     )
                 ],
+<<<<<<< HEAD
                 [InlineKeyboardButton(text=texts.BACK, callback_data=back_cb)],
+=======
+                [InlineKeyboardButton(text=texts.BACK, callback_data='back_to_menu')],
+>>>>>>> 620515b8 (все кнопки на своих местах)
             ]
         ),
         parse_mode='HTML',
