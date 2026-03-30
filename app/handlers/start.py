@@ -815,11 +815,44 @@ async def cmd_start(message: types.Message, state: FSMContext, db: AsyncSession,
 
         texts = get_texts(user.language)
 
-        if referral_code and not user.referred_by_id:
+        # Try to apply referral code if user doesn't have a referrer yet and hasn't made first topup
+        if referral_code and not user.referred_by_id and not user.has_made_first_topup:
+            from app.database.crud.user import get_user_by_referral_code
+            from app.services.referral_service import process_referral_registration
+
+            referrer = await get_user_by_referral_code(db, referral_code)
+            if referrer and referrer.id != user.id:
+                user.referred_by_id = referrer.id
+                await db.commit()
+                logger.info(
+                    '✅ Реферальный код применен для существующего пользователя',
+                    user_id=user.id,
+                    referrer_id=referrer.id,
+                )
+                try:
+                    bot = message.bot
+                    await process_referral_registration(db, user.id, referrer.id, bot=bot)
+                    await message.answer(
+                        texts.t(
+                            'REFERRAL_CODE_ACCEPTED',
+                            '✅ Реферальный код применен!',
+                        )
+                    )
+                except Exception as e:
+                    logger.error('Ошибка при применении реферального кода', error=e)
+            else:
+                await message.answer(
+                    texts.t(
+                        'REFERRAL_CODE_INVALID',
+                        '❌ Неверный реферальный код',
+                    )
+                )
+        elif referral_code and not user.referred_by_id:
+            # User already made first topup, cannot apply referral code
             await message.answer(
                 texts.t(
                     'ALREADY_REGISTERED_REFERRAL',
-                    'ℹ️ Вы уже зарегистрированы в системе. Реферальная ссылка не может быть применена.',
+                    'ℹ️ Вы уже пополнили баланс. Реферальная ссылка не может быть применена.',
                 )
             )
 
@@ -1495,11 +1528,45 @@ async def complete_registration_from_callback(callback: types.CallbackQuery, sta
         texts = get_texts(existing_user.language)
 
         data = await state.get_data() or {}
-        if data.get('referral_code') and not existing_user.referred_by_id:
+        # Try to apply referral code if user doesn't have a referrer yet and hasn't made first topup
+        if data.get('referral_code') and not existing_user.referred_by_id and not existing_user.has_made_first_topup:
+            from app.database.crud.user import get_user_by_referral_code
+            from app.services.referral_service import process_referral_registration
+
+            referral_code = data.get('referral_code')
+            referrer = await get_user_by_referral_code(db, referral_code)
+            if referrer and referrer.id != existing_user.id:
+                existing_user.referred_by_id = referrer.id
+                await db.commit()
+                logger.info(
+                    '✅ Реферальный код применен для существующего пользователя',
+                    user_id=existing_user.id,
+                    referrer_id=referrer.id,
+                )
+                try:
+                    bot = callback.bot
+                    await process_referral_registration(db, existing_user.id, referrer.id, bot=bot)
+                    await callback.message.answer(
+                        texts.t(
+                            'REFERRAL_CODE_ACCEPTED',
+                            '✅ Реферальный код применен!',
+                        )
+                    )
+                except Exception as e:
+                    logger.error('Ошибка при применении реферального кода', error=e)
+            else:
+                await callback.message.answer(
+                    texts.t(
+                        'REFERRAL_CODE_INVALID',
+                        '❌ Неверный реферальный код',
+                    )
+                )
+        elif data.get('referral_code') and not existing_user.referred_by_id:
+            # User already made first topup, cannot apply referral code
             await callback.message.answer(
                 texts.t(
                     'ALREADY_REGISTERED_REFERRAL',
-                    'ℹ️ Вы уже зарегистрированы в системе. Реферальная ссылка не может быть применена.',
+                    'ℹ️ Вы уже пополнили баланс. Реферальная ссылка не может быть применена.',
                 )
             )
 
@@ -1824,11 +1891,45 @@ async def complete_registration(message: types.Message, state: FSMContext, db: A
         texts = get_texts(existing_user.language)
 
         data = await state.get_data() or {}
-        if data.get('referral_code') and not existing_user.referred_by_id:
+        # Try to apply referral code if user doesn't have a referrer yet and hasn't made first topup
+        if data.get('referral_code') and not existing_user.referred_by_id and not existing_user.has_made_first_topup:
+            from app.database.crud.user import get_user_by_referral_code
+            from app.services.referral_service import process_referral_registration
+
+            referral_code = data.get('referral_code')
+            referrer = await get_user_by_referral_code(db, referral_code)
+            if referrer and referrer.id != existing_user.id:
+                existing_user.referred_by_id = referrer.id
+                await db.commit()
+                logger.info(
+                    '✅ Реферальный код применен для существующего пользователя',
+                    user_id=existing_user.id,
+                    referrer_id=referrer.id,
+                )
+                try:
+                    bot = message.bot
+                    await process_referral_registration(db, existing_user.id, referrer.id, bot=bot)
+                    await message.answer(
+                        texts.t(
+                            'REFERRAL_CODE_ACCEPTED',
+                            '✅ Реферальный код применен!',
+                        )
+                    )
+                except Exception as e:
+                    logger.error('Ошибка при применении реферального кода', error=e)
+            else:
+                await message.answer(
+                    texts.t(
+                        'REFERRAL_CODE_INVALID',
+                        '❌ Неверный реферальный код',
+                    )
+                )
+        elif data.get('referral_code') and not existing_user.referred_by_id:
+            # User already made first topup, cannot apply referral code
             await message.answer(
                 texts.t(
                     'ALREADY_REGISTERED_REFERRAL',
-                    'ℹ️ Вы уже зарегистрированы в системе. Реферальная ссылка не может быть применена.',
+                    'ℹ️ Вы уже пополнили баланс. Реферальная ссылка не может быть применена.',
                 )
             )
 

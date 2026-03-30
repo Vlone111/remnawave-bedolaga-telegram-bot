@@ -897,7 +897,7 @@
   "ADMIN_WELCOME_PREVIEW": "👁️ Предпросмотр",
   "ADMIN_WELCOME_RESET": "🔄 Сбросить",
   "ADMIN_WELCOME_SHOW": "👁️ Показать текущий",
-  "ALREADY_REGISTERED_REFERRAL": "ℹ️ Вы уже зарегистрированы в системе. Реферальная ссылка не может быть применена.",
+  "ALREADY_REGISTERED_REFERRAL": "ℹ️ Вы уже пополнили баланс. Реферальная ссылка не может быть применена.",
   "ATTACHMENTS_SENT": "✅ Вложения отправлены.",
   "AUTOPAY_BUTTON": "💳 Автоплатёж",
   "AUTOPAY_DAYS_SET": "✅ Установлено {days} дней!",
