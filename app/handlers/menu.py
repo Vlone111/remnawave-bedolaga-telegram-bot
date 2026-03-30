@@ -22,6 +22,7 @@ from app.keyboards.inline import (
     get_info_menu_keyboard,
     get_language_selection_keyboard,
     get_main_menu_keyboard_async,
+    get_settings_menu_keyboard,
 )
 from app.localization.texts import get_rules, get_texts
 from app.services.faq_service import FaqService
@@ -995,6 +996,41 @@ async def process_language_change(
     await callback.answer(texts.t('LANGUAGE_SELECTED', '🌐 Язык интерфейса обновлен.'))
 
 
+async def show_settings_menu(
+    callback: types.CallbackQuery,
+    db_user: User,
+    db: AsyncSession,
+):
+    if db_user is None:
+        # Пользователь не найден, используем язык по умолчанию
+        texts = get_texts(settings.DEFAULT_LANGUAGE)
+        await callback.answer(
+            texts.t(
+                'USER_NOT_FOUND_ERROR',
+                'Ошибка: пользователь не найден.',
+            ),
+            show_alert=True,
+        )
+        return
+
+    texts = get_texts(db_user.language)
+
+    header = texts.t('MENU_SETTINGS_HEADER', '⚙️ <b>Настройки</b>')
+    prompt = texts.t('MENU_SETTINGS_PROMPT', 'Выберите опцию:')
+    caption = f'{header}\n\n{prompt}' if prompt else header
+
+    # Создаём клавиатуру с кнопками Язык и Инфо
+    keyboard = get_settings_menu_keyboard(language=db_user.language)
+
+    await edit_or_answer_photo(
+        callback=callback,
+        caption=caption,
+        keyboard=keyboard,
+        parse_mode='HTML',
+    )
+    await callback.answer()
+
+
 async def handle_back_to_menu(callback: types.CallbackQuery, state: FSMContext, db_user: User, db: AsyncSession):
     if db_user is None:
         # Пользователь не найден, используем язык по умолчанию
@@ -1508,6 +1544,11 @@ def register_handlers(dp: Dispatcher):
     dp.callback_query.register(
         show_info_menu,
         F.data == 'menu_info',
+    )
+
+    dp.callback_query.register(
+        show_settings_menu,
+        F.data == 'menu_settings',
     )
 
     dp.callback_query.register(

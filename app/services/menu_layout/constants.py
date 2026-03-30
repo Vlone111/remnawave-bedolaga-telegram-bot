@@ -65,15 +65,9 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
             'max_per_row': 2,
         },
         {
-            'id': 'support_info_row',
-            'buttons': ['support', 'info'],
+            'id': 'support_settings_row',
+            'buttons': ['support', 'settings'],
             'conditions': None,
-            'max_per_row': 2,
-        },
-        {
-            'id': 'language_row',
-            'buttons': ['language'],
-            'conditions': {'language_selection_enabled': True},
             'max_per_row': 2,
         },
         {
@@ -222,6 +216,16 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
             'conditions': {'support_enabled': True},
             'dynamic_text': False,
         },
+        'settings': {
+            'type': 'builtin',
+            'builtin_id': 'settings',
+            'text': {'ru': '⚙️ Настройки', 'en': '⚙️ Settings'},
+            'action': 'menu_settings',
+            'enabled': True,
+            'visibility': 'all',
+            'conditions': None,
+            'dynamic_text': False,
+        },
         'info': {
             'type': 'builtin',
             'builtin_id': 'info',
@@ -358,6 +362,13 @@ BUILTIN_BUTTONS_INFO: list[dict[str, Any]] = [
         'default_text': {'ru': '💬 Поддержка', 'en': '💬 Support'},
         'callback_data': 'menu_support',
         'default_conditions': {'support_enabled': True},
+        'supports_dynamic_text': False,
+    },
+    {
+        'id': 'settings',
+        'default_text': {'ru': '⚙️ Настройки', 'en': '⚙️ Settings'},
+        'callback_data': 'menu_settings',
+        'default_conditions': None,
         'supports_dynamic_text': False,
     },
     {

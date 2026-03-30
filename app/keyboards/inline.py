@@ -753,19 +753,17 @@ def get_main_menu_keyboard(
     if support_enabled:
         paired_buttons.append(InlineKeyboardButton(text=texts.MENU_SUPPORT, callback_data='menu_support'))
 
-    # Добавляем кнопку активации
-    if settings.ACTIVATE_BUTTON_VISIBLE:
-        paired_buttons.append(InlineKeyboardButton(text=settings.ACTIVATE_BUTTON_TEXT, callback_data='activate_button'))
-
+    # Добавляем кнопку Настройки (вместо отдельных кнопок Язык и Инфо)
     paired_buttons.append(
         InlineKeyboardButton(
-            text=texts.t('MENU_INFO', 'ℹ️ Инфо'),
-            callback_data='menu_info',
+            text=texts.t('MENU_SETTINGS', '⚙️ Настройки'),
+            callback_data='menu_settings',
         )
     )
 
-    if settings.is_language_selection_enabled():
-        paired_buttons.append(InlineKeyboardButton(text=texts.MENU_LANGUAGE, callback_data='menu_language'))
+    # Добавляем кнопку активации
+    if settings.ACTIVATE_BUTTON_VISIBLE:
+        paired_buttons.append(InlineKeyboardButton(text=settings.ACTIVATE_BUTTON_TEXT, callback_data='activate_button'))
 
     for i in range(0, len(paired_buttons), 2):
         row = paired_buttons[i : i + 2]
@@ -868,6 +866,39 @@ def get_info_menu_keyboard(
             ]
         )
 
+    buttons.append([InlineKeyboardButton(text=texts.BACK, callback_data='back_to_menu')])
+
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
+
+
+def get_settings_menu_keyboard(language: str = DEFAULT_LANGUAGE) -> InlineKeyboardMarkup:
+    """Клавиатура для меню настроек с кнопками Язык и Инфо."""
+    texts = get_texts(language)
+
+    buttons: list[list[InlineKeyboardButton]] = []
+
+    # Кнопка Язык
+    if settings.is_language_selection_enabled():
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text=texts.t('MENU_LANGUAGE', '🌐 Язык'),
+                    callback_data='menu_language',
+                )
+            ]
+        )
+
+    # Кнопка Инфо
+    buttons.append(
+        [
+            InlineKeyboardButton(
+                text=texts.t('MENU_INFO', 'ℹ️ Инфо'),
+                callback_data='menu_info',
+            )
+        ]
+    )
+
+    # Кнопка Назад
     buttons.append([InlineKeyboardButton(text=texts.BACK, callback_data='back_to_menu')])
 
     return InlineKeyboardMarkup(inline_keyboard=buttons)
