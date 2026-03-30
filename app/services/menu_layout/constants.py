@@ -11,6 +11,12 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
     'version': 1,
     'rows': [
         {
+            'id': 'buy_subscription_row',
+            'buttons': ['buy_subscription'],
+            'conditions': None,
+            'max_per_row': 1,
+        },
+        {
             'id': 'subscription_row',
             'buttons': ['subscription'],
             'conditions': {'has_active_subscription': True},
@@ -27,12 +33,6 @@ DEFAULT_MENU_CONFIG: dict[str, Any] = {
             'buttons': ['balance', 'support'],
             'conditions': None,
             'max_per_row': 2,
-        },
-        {
-            'id': 'buy_subscription_row',
-            'buttons': ['buy_subscription'],
-            'conditions': None,
-            'max_per_row': 1,
         },
         {
             'id': 'trial_balance_row',
