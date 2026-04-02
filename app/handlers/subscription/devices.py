@@ -1449,6 +1449,34 @@ async def handle_device_guide(callback: types.CallbackQuery, db_user: User, db: 
         )
         return
 
+    # iOS custom guide
+    if device_type == 'ios':
+        guide_text = f"""📱 <b>Как подключить VPN (Happ)</b>
+
+<b>1. Установи приложение</b>
+Скачай Happ:
+https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973
+
+<b>2. Скопируй свою ссылку подписки</b>
+<code>{html_mod.escape(subscription_link)}</code>
+
+<b>3. Добавь её в приложение</b>
+Открой Happ
+Нажми «+» в правом верхнем углу
+Выбери «Буфер обмена» (ссылка вставится сама)
+
+<b>4. Подключись</b>
+Выбери сервер
+Нажми большую кнопку подключения"""
+
+        await callback.message.edit_text(
+            guide_text,
+            reply_markup=get_back_keyboard(),
+            parse_mode='HTML',
+        )
+        await callback.answer()
+        return
+
     apps = await get_apps_for_platform_async(device_type, db_user.language)
 
     hide_subscription_link = settings.should_hide_subscription_link()
