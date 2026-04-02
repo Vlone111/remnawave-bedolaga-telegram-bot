@@ -2,7 +2,11 @@ import html as html_mod
 from datetime import UTC, datetime
 
 from aiogram import types
+<<<<<<< HEAD
 from aiogram.fsm.context import FSMContext
+=======
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+>>>>>>> ba3e96ea (last changes guide)
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -1454,8 +1458,11 @@ async def handle_device_guide(callback: types.CallbackQuery, db_user: User, db: 
         guide_text = f"""📱 <b>Как подключить VPN (Happ)</b>
 
 <b>1. Установи приложение</b>
-Скачай Happ:
+Скачай Happ (Для Русского APPLEID):
 https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973
+
+Скачай Happ (GLOBAL AppleID):
+https://apps.apple.com/app/id6504287215
 
 <b>2. Скопируй свою ссылку подписки</b>
 <code>{html_mod.escape(subscription_link)}</code>
@@ -1469,9 +1476,39 @@ https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973
 Выбери сервер
 Нажми большую кнопку подключения"""
 
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(
+                        text='⬇️ Скачать приложение',
+                        url='https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973',
+                        style='primary',
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text=' Другие приложения',
+                        callback_data='app_list_ios',
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text='🔄 Выбрать другое устройство',
+                        callback_data='back_to_menu',
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text='⬅️ Назад',
+                        callback_data='back_to_menu',
+                    )
+                ],
+            ]
+        )
+
         await callback.message.edit_text(
             guide_text,
-            reply_markup=get_back_keyboard(),
+            reply_markup=keyboard,
             parse_mode='HTML',
         )
         await callback.answer()
@@ -1725,3 +1762,4 @@ async def show_device_connection_help(
         help_text, reply_markup=get_device_management_help_keyboard(db_user.language), parse_mode='HTML'
     )
     await callback.answer()
+
